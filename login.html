@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login administrativo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-card">
+    <a class="back-link" href="index.html">← Voltar ao catálogo</a>
+    <p class="eyebrow">Área restrita</p>
+    <h1>Entrar como administrador</h1>
+    <p class="muted">Acesso demonstrativo: admin / 1234</p>
+
+    <form id="loginForm">
+      <label class="field-label" for="username">Usuário</label>
+      <input class="text-input" id="username" name="username" autocomplete="username" required>
+
+      <label class="field-label" for="password">Senha</label>
+      <input class="text-input" id="password" name="password" type="password"
+        autocomplete="current-password" required>
+
+      <button class="button button-primary button-full" type="submit">Entrar</button>
+      <p id="loginMessage" class="form-message" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("loginMessage");
+
+      if (username === "admin" && password === "1234") {
+        sessionStorage.setItem("catalogAdminLoggedIn", "true");
+        window.location.href = "admin.html";
+      } else {
+        message.textContent = "Usuário ou senha incorretos.";
+      }
+    });
+  </script>
+</body>
+</html>

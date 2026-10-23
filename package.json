@@ -1,0 +1,21 @@
+{
+  "name": "catalogo-bones",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Catálogo local de bonés e chapéus",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2"
+  }
+  {
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
+}

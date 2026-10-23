@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel administrativo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">◈</span>
+      <span>Painel administrativo</span>
+    </a>
+    <nav>
+      <a class="header-link" href="index.html">Ver catálogo</a>
+      <button class="button button-light" id="logoutButton" type="button">Sair</button>
+    </nav>
+  </header>
+
+  <main class="container admin-container">
+    <section class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Configurações da loja</p>
+          <h1>Identidade da loja</h1>
+        </div>
+      </div>
+
+      <form id="settingsForm" class="settings-grid">
+        <div>
+          <label class="field-label" for="storeTitle">Título da página</label>
+          <input class="text-input" id="storeTitle" maxlength="80" required>
+        </div>
+        <div>
+          <label class="field-label" for="storeLogo">Texto do logo</label>
+          <input class="text-input" id="storeLogo" maxlength="40" required>
+        </div>
+        <div class="form-span">
+          <label class="field-label" for="storeLogoImage">Imagem do logo</label>
+          <input class="text-input file-input" id="storeLogoImage" type="file" accept="image/*">
+          <small class="help-text">A imagem será salva em assets/img no servidor.</small>
+          <img id="logoPreview" class="admin-image-preview hidden" alt="Prévia do logo">
+          <button class="button button-light logo-remove-button" id="removeLogoButton" type="button">
+            Remover imagem do logo
+          </button>
+        </div>
+        <button class="button button-primary settings-save" type="submit">Salvar identidade</button>
+      </form>
+      <p id="settingsMessage" class="form-message" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Catálogo</p>
+          <h2 id="productFormTitle">Adicionar produto</h2>
+        </div>
+      </div>
+
+      <form id="productForm" class="product-form">
+        <input id="productId" type="hidden">
+
+        <div>
+          <label class="field-label" for="productName">Nome do produto</label>
+          <input class="text-input" id="productName" maxlength="100" required>
+        </div>
+
+        <div>
+          <label class="field-label" for="productPrice">Preço por unidade (R$)</label>
+          <input class="text-input" id="productPrice" type="number" min="0.01"
+            step="0.01" placeholder="Ex.: 10,00" required>
+          <small class="help-text">O total mínimo será calculado multiplicando este preço pela quantidade mínima.</small>
+        </div>
+
+        <div>
+          <label class="field-label" for="productMinQty">Quantidade mínima por pedido</label>
+          <input class="text-input" id="productMinQty" type="number" min="1" step="1" value="1" required>
+        </div>
+
+        <div class="form-span">
+          <label class="field-label" for="productDescription">Descrição</label>
+          <textarea class="text-input" id="productDescription" rows="4" maxlength="1500"></textarea>
+        </div>
+
+        <div class="form-span">
+          <label class="field-label" for="productImage">Imagem do produto</label>
+          <input class="text-input file-input" id="productImage" type="file" accept="image/*">
+          <small class="help-text">A imagem será salva em assets/img no servidor.</small>
+          <img id="imagePreview" class="admin-image-preview hidden" alt="Prévia da imagem">
+        </div>
+
+        <div class="form-actions form-span">
+          <button class="button button-primary" id="submitProductButton" type="submit">Adicionar produto</button>
+          <button class="button button-light hidden" id="cancelEditButton" type="button">Cancelar edição</button>
+          <p id="productMessage" class="form-message" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section">
+      <div class="section-heading">
+        <h2>Produtos cadastrados</h2>
+        <span id="adminProductCount" class="muted"></span>
+      </div>
+      <div id="adminProductList" class="admin-product-list"></div>
+      <p id="adminEmptyState" class="empty-state hidden">Nenhum produto cadastrado.</p>
+    </section>
+  </main>
+
+  <script>
+    if (sessionStorage.getItem("catalogAdminLoggedIn") !== "true") {
+      window.location.replace("login.html");
+    }
+  </script>
+</body>
+</html>

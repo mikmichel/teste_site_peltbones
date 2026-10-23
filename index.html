@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de bonés e chapéus</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" id="brandMark" aria-hidden="true">◈</span>
+      <img class="brand-logo hidden" id="brandLogo" alt="Logo da loja">
+      <span id="logoText">Catálogo</span>
+    </a>
+    <nav>
+      <button class="button button-light" id="openCartButton" type="button">
+        Carrinho <span id="cartCount" class="cart-count">0</span>
+      </button>
+      <a class="header-link" href="login.html">Administração</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">Estilo para todos os dias</p>
+      <h1 id="pageTitle">Bonés e chapéus para você</h1>
+      <p>Confira os produtos e envie seu pedido pelo WhatsApp.</p>
+    </section>
+
+    <section aria-label="Produtos">
+      <div class="section-heading">
+        <h2>Nossos produtos</h2>
+        <span id="productCount" class="muted"></span>
+      </div>
+      <div id="productGrid" class="product-grid"></div>
+      <p id="emptyProducts" class="empty-state hidden">
+        Ainda não há produtos cadastrados.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span id="footerStoreName">Catálogo</span>
+    <a href="login.html">Área administrativa</a>
+  </footer>
+
+  <dialog id="productDialog" class="dialog">
+    <button class="dialog-close" type="button" data-close="productDialog" aria-label="Fechar">×</button>
+    <div id="productDetails"></div>
+  </dialog>
+
+  <dialog id="cartDialog" class="dialog cart-dialog">
+    <button class="dialog-close" type="button" data-close="cartDialog" aria-label="Fechar">×</button>
+    <h2>Seu carrinho</h2>
+    <p class="muted">O preço é por unidade. Cada conjunto corresponde à quantidade mínima do produto.</p>
+    <div id="cartItems"></div>
+    <div class="cart-total">
+      <span>Total do pedido</span>
+      <strong id="cartTotal">R$ 0,00</strong>
+    </div>
+    <label class="field-label" for="customerName">Seu nome (opcional)</label>
+    <input id="customerName" class="text-input" type="text" placeholder="Nome">
+    <button id="sendOrderButton" class="button button-primary button-full" type="button">
+      Enviar pedido pelo WhatsApp
+    </button>
+    <p id="cartMessage" class="form-message" aria-live="polite"></p>
+  </dialog>
+</body>
+</html>
