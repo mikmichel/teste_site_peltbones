@@ -1,44 +1,88 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Painel Admin</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Admin - Cadastro</title>
 </head>
 <body>
-  <header class="site-header">
-    <span>Painel de Controle</span>
-    <button id="logoutButton" class="button">Sair</button>
-  </header>
+    <h1>Painel Administrativo</h1>
+    
+    <div id="login-section">
+        <input type="password" id="admin-pass" placeholder="Senha Admin">
+        <button onclick="login()">Entrar</button>
+    </div>
 
-  <main class="container">
-    <section>
-      <h2>Cadastrar Produto</h2>
-      <form id="productForm">
-        <input type="text" id="name" placeholder="Nome do Produto" required>
-        <input type="number" id="price" placeholder="Preço (ex: 59.90)" step="0.01" required>
-        <textarea id="description" placeholder="Descrição"></textarea>
-        <input type="file" id="imageFile" accept="image/*" required>
-        <button type="submit" class="button button-primary">Salvar Produto</button>
-      </form>
-    </section>
+    <div id="admin-content" style="display:none;">
+        <h2>Cadastrar Produto</h2>
+        <form id="product-form">
+            <input type="text" id="name" placeholder="Nome do Produto" required><br>
+            <input type="number" id="price" placeholder="Preço" required><br>
+            <input type="number" id="minQuantity" placeholder="Quantidade Mínima" value="1" required><br>
+            <textarea id="description" placeholder="Descrição"></textarea><br>
+            <input type="file" id="image-file" accept="image/*"><br>
+            <button type="submit">Salvar Produto</button>
+        </form>
 
-    <hr>
+        <h2>Produtos Cadastrados</h2>
+        <div id="admin-product-list"></div>
+    </div>
 
-    <section>
-      <h2>Alterar Senha</h2>
-      <form id="changePasswordForm">
-        <input type="password" id="oldPass" placeholder="Senha Atual" required>
-        <input type="password" id="newPass" placeholder="Nova Senha" required>
-        <button type="submit" class="button">Atualizar Senha</button>
-      </form>
-    </section>
+    <script>
+        async function login() {
+            const password = document.getElementById('admin-pass').value;
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (res.ok) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                loadAdminProducts();
+            } else {
+                alert('Senha incorreta');
+            }
+        }
 
-    <section>
-      <h2>Produtos Cadastrados</h2>
-      <div id="adminProductGrid" class="product-grid"></div>
-    </section>
-  </main>
-  <script src="admin.js"></script>
+        document.getElementById('product-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('price', document.getElementById('price').value);
+            formData.append('minQuantity', document.getElementById('minQuantity').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('image', document.getElementById('image-file').files[0]);
+
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Produto cadastrado!');
+                document.getElementById('product-form').reset();
+                loadAdminProducts();
+            }
+        };
+
+        async function loadAdminProducts() {
+            const res = await fetch('/api/products');
+            const products = await res.json();
+            const list = document.getElementById('admin-product-list');
+            list.innerHTML = products.map(p => `
+                <div>
+                    ${p.name} - R$ ${p.price} 
+                    <button onclick="deleteProduct('${p._id}')">Excluir</button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Excluir este produto?')) {
+                await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                loadAdminProducts();
+            }
+        }
+    </script>
 </body>
 </html>
