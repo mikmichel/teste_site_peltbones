@@ -81,3 +81,22 @@ app.delete('/api/products/:id', async (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000, () => console.log(`Servidor rodando na porta ${process.env.PORT || 3000}`));
+
+
+// ROTA SECRETA DE EMERGÊNCIA: Acesse /reset-admin no navegador para forçar a senha
+app.get('/reset-admin', async (req, res) => {
+  try {
+    const password = process.env.ADMIN_PASSWORD;
+    if (!password) {
+      return res.send("Erro: A variável ADMIN_PASSWORD não foi configurada no painel do Render!");
+    }
+    
+    // Deleta qualquer admin antigo e cria um novo com a senha do .env
+    await Admin.deleteMany({}); 
+    await Admin.create({ password: password });
+    
+    res.send(`Sucesso! O administrador foi resetado. A senha agora é a que está no seu .env: ${password}`);
+  } catch (error) {
+    res.status(500).send("Erro ao resetar admin: " + error.message);
+  }
+});
