@@ -1,109 +1,71 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Catálogo</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .product-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .product-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
-        button { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; margin-top: 10px; }
-        button:hover { background: #218838; }
-        #product-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); color:white; z-index: 1000; }
-        .modal-content { background:#fff; color:#000; margin: 5% auto; padding:20px; width:80%; max-width:500px; border-radius:10px; text-align: center; }
-        .modal-content img { width:100%; max-height:300px; object-fit:contain; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de bonés e chapéus</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
 </head>
 <body>
-    <h1>Catálogo de Produtos</h1>
-    <div id="product-list" class="grid">Carregando produtos...</div>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" id="brandMark" aria-hidden="true">◈</span>
+      <img class="brand-logo hidden" id="brandLogo" alt="Logo da loja">
+      <span id="logoText">Catálogo</span>
+    </a>
+    <nav>
+      <button class="button button-light" id="openCartButton" type="button">
+        Carrinho <span id="cartCount" class="cart-count">0</span>
+      </button>
+      <a class="header-link" href="login.html">Administração</a>
+    </nav>
+  </header>
 
-    <!-- Modal de Detalhes -->
-    <div id="product-modal">
-        <div class="modal-content">
-            <img id="modal-image" src="">
-            <h2 id="modal-name"></h2>
-            <p id="modal-description"></p>
-            <p><strong>Preço:</strong> R$ <span id="modal-price"></span></p>
-            <p><strong>Pedido Mínimo:</strong> <span id="modal-min"></span> unidades</p>
-            <button id="add-to-cart-btn">Adicionar ao Carrinho</button>
-            <button onclick="closeModal()" style="background:#dc3545;">Fechar</button>
-        </div>
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">Estilo para todos os dias</p>
+      <h1 id="pageTitle">Bonés e chapéus para você</h1>
+      <p>Confira os produtos e envie seu pedido pelo WhatsApp.</p>
+    </section>
+
+    <section aria-label="Produtos">
+      <div class="section-heading">
+        <h2>Nossos produtos</h2>
+        <span id="productCount" class="muted"></span>
+      </div>
+      <div id="productGrid" class="product-grid"></div>
+      <p id="emptyProducts" class="empty-state hidden">
+        Ainda não há produtos cadastrados.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span id="footerStoreName">Catálogo</span>
+    <a href="login.html">Área administrativa</a>
+  </footer>
+
+  <dialog id="productDialog" class="dialog">
+    <button class="dialog-close" type="button" data-close="productDialog" aria-label="Fechar">×</button>
+    <div id="productDetails"></div>
+  </dialog>
+
+  <dialog id="cartDialog" class="dialog cart-dialog">
+    <button class="dialog-close" type="button" data-close="cartDialog" aria-label="Fechar">×</button>
+    <h2>Seu carrinho</h2>
+    <p class="muted">O preço é por unidade. Cada conjunto corresponde à quantidade mínima do produto.</p>
+    <div id="cartItems"></div>
+    <div class="cart-total">
+      <span>Total do pedido</span>
+      <strong id="cartTotal">R$ 0,00</strong>
     </div>
-
-    <script>
-        let allProducts = [];
-
-        async function fetchProducts() {
-            try {
-                const response = await fetch('/api/products');
-                if (!response.ok) throw new Error('Erro ao buscar produtos');
-                allProducts = await response.json();
-                renderProducts();
-            } catch (err) {
-                document.getElementById('product-list').innerHTML = '❌ Erro ao carregar produtos. Verifique o servidor.';
-                console.error(err);
-            }
-        }
-
-        function renderProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = '';
-
-            if (allProducts.length === 0) {
-                list.innerHTML = 'Nenhum produto cadastrado.';
-                return;
-            }
-
-            allProducts.forEach(product => {
-                const div = document.createElement('div');
-                div.className = 'product-card';
-                div.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p>R$ ${product.price}</p>
-                    <button onclick="openProduct('${product._id}')">Ver Detalhes</button>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function openProduct(id) {
-            const product = allProducts.find(p => p._id === id);
-            if (!product) return;
-
-            document.getElementById('modal-image').src = product.image;
-            document.getElementById('modal-name').innerText = product.name;
-            document.getElementById('modal-description').innerText = product.description;
-            document.getElementById('modal-price').innerText = product.price;
-            document.getElementById('modal-min').innerText = product.minQuantity || 1;
-            
-            document.getElementById('add-to-cart-btn').onclick = () => addToCart(product);
-            document.getElementById('product-modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('product-modal').style.display = 'none';
-        }
-
-        function addToCart(product) {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const existing = cart.find(item => item._id === product._id);
-
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${product.name} adicionado ao carrinho!`);
-        }
-
-        // Inicia a busca de produtos
-        fetchProducts();
-    </script>
+    <label class="field-label" for="customerName">Seu nome (opcional)</label>
+    <input id="customerName" class="text-input" type="text" placeholder="Nome">
+    <button id="sendOrderButton" class="button button-primary button-full" type="button">
+      Enviar pedido pelo WhatsApp
+    </button>
+    <p id="cartMessage" class="form-message" aria-live="polite"></p>
+  </dialog>
 </body>
 </html>
